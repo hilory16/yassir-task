@@ -8,12 +8,7 @@ import { DatePicker } from "components/DatePicker";
 import { InputGroupWrapper } from "components/FormWrapper";
 import Button from "components/Button";
 import useTheme from "hooks/useTheme";
-
-const options = {
-  status: ["all", "confirmed", "seated", "checked out", "not confirmed"],
-  shift: ["all", "breakfast", "lunch", "dinner"],
-  area: ["all", "main room", "bar"],
-};
+import { options } from "../../utils";
 
 const initialState = {
   status: "",
@@ -74,6 +69,13 @@ export default function FilterModal({
 
         <div className="form-wrapper">
           <InputGroupWrapper>
+            <DatePicker
+              value={filterState.date}
+              name="date"
+              placeholder="Date"
+              onChange={(val) => onChange("date", val.target.value)}
+              label="Select Date"
+            />
             <SelectInput
               id="status"
               label="Select Status"
@@ -85,7 +87,9 @@ export default function FilterModal({
                 value: item,
               }))}
             />
+          </InputGroupWrapper>
 
+          <InputGroupWrapper>
             <SelectInput
               id="shift"
               label="Select Shifts"
@@ -97,9 +101,7 @@ export default function FilterModal({
                 value: item,
               }))}
             />
-          </InputGroupWrapper>
 
-          <InputGroupWrapper>
             <SelectInput
               id="area"
               label="Select Area"
@@ -110,14 +112,6 @@ export default function FilterModal({
                 label: item,
                 value: item,
               }))}
-            />
-
-            <DatePicker
-              value={filterState.date}
-              name="date"
-              placeholder="Date"
-              onChange={(val) => onChange("date", val.target.value)}
-              label="Select Date"
             />
           </InputGroupWrapper>
         </div>

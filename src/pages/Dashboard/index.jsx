@@ -20,7 +20,7 @@ export default function Index() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterVisibility, setFilterVisibility] = useState(false);
   const [filters, setFilters] = useState({});
-  const [searchValue] = useDebounce(searchTerm, 500);
+  const [searchValue] = useDebounce(searchTerm, 300);
 
   const [columnVisibility, setColumnVisibility] = useState({
     guestNotes: false,

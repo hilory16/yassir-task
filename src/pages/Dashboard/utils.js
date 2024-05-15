@@ -92,6 +92,13 @@ const getFilter = (base, value) => {
     : true;
 };
 
+const dateCheck = (date1, date2) => {
+  if (date1 && date2) {
+    return dayjs(date1, "DD.MM.YYYY")?.diff(date2) === 0;
+  }
+  return true;
+};
+
 export const searchCustomer = (data, key) => {
   if ((data, key)) {
     const { search, status, shift, date, area } = key;
@@ -103,19 +110,30 @@ export const searchCustomer = (data, key) => {
 
     return data
       .filter(({ customer }) => {
-        return searchValues.every(
-          (item) =>
-            customer?.firstName.toLowerCase().indexOf(item) > -1 ||
-            customer?.lastName.toLowerCase().indexOf(item) > -1
-        );
+        let matched = {};
+        return searchValues.every((item) => {
+          const first = customer?.firstName.toLowerCase().indexOf(item) > -1;
+          const second = customer?.lastName.toLowerCase().indexOf(item) > -1;
+          if ((matched.first && first) || (matched.second && second))
+            return false;
+
+          matched = { first, second };
+          return first || second;
+        });
       })
       .filter(
         (item) =>
           getFilter(item.status, status) &&
           getFilter(item.shift, shift) &&
           getFilter(item.area, area) &&
-          getFilter(item.date, date)
+          dateCheck(item.businessDate.replaceAll("."), date)
       );
   }
   return data || [];
+};
+
+export const options = {
+  status: ["all", "confirmed", "seated", "checked out", "not confirmed"],
+  shift: ["all", "breakfast", "lunch", "dinner"],
+  area: ["all", "main room", "bar"],
 };
