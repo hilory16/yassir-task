@@ -300,21 +300,5 @@ export const data = {
       area: "MAIN ROOM",
       guestNotes: "",
     },
-
-    {
-      id: 21,
-      businessDate: "06.08.2018",
-      status: "CHECKED OUT",
-      shift: "LUNCH",
-      start: "2018-08-06T08:00:00Z",
-      end: "2018-08-06T09:00:00Z",
-      quantity: 1,
-      customer: {
-        firstName: "Yuri",
-        lastName: "Olamide",
-      },
-      area: "MAIN ROOM",
-      guestNotes: "Likes the blue cheese burguer",
-    },
   ],
 };

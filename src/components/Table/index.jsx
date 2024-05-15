@@ -42,7 +42,7 @@ export default function Table({ table }) {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="yassir-table-tr">
+            <tr key={row.id} className="yassir-table-tr" test-id={`table-tr`}>
               {row.getVisibleCells().map((cell, index) => (
                 <td
                   key={cell.id}
