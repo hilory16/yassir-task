@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -13,19 +13,22 @@ import Table from "components/Table";
 import ReservationTableControls from "./Feature/ReservationTableControls";
 import FilterModal from "./Feature/FilterModal";
 import { getColumns, searchCustomer } from "./utils";
+import { apis } from "services";
 
 export default function Index() {
   const [sorting, setSorting] = useState();
   const [tableData, setTableData] = useState([]);
+  const [responseData, setResponseData] = useState([]);
+  const [loading, setLoading] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterVisibility, setFilterVisibility] = useState(false);
   const [filters, setFilters] = useState({});
   const [searchValue] = useDebounce(searchTerm, 300);
-
   const [columnVisibility, setColumnVisibility] = useState({
     guestNotes: false,
   });
 
+  // CREATE TABLE
   const table = useReactTable({
     data: tableData,
     columns: getColumns(),
@@ -36,6 +39,20 @@ export default function Index() {
     onColumnVisibilityChange: setColumnVisibility,
   });
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const { reservations } = await apis.fetchData();
+      // (data.reservations) - I ADDED THIS FALLBACK BECAUSE THE LINK WAS INACCESSIBLE AS SOME POINT
+      setResponseData(reservations || data.reservations);
+    } catch (e) {
+      // I ADDED THIS FALLBACK BECAUSE THE LINK WAS INACCESSIBLE AS SOME POINT
+      setResponseData(data.reservations);
+    }
+    setLoading(false);
+  };
+
+  // HANDLE HIDE & SHOW COLUMN
   const handleColumnVisibility = (val) => {
     const handleView = (value) => {
       if (value === undefined) return false;
@@ -52,35 +69,44 @@ export default function Index() {
     setSearchTerm(value);
   };
 
-  const handleSearch = (text) => {
-    const result = searchCustomer(data?.reservations, text);
-    setTableData(result);
-  };
+  const handleSearch = useCallback(
+    (text) => {
+      const result = searchCustomer(responseData, text);
+      setTableData(result);
+    },
+    [responseData]
+  );
 
   const onClearSeacrch = () => setSearchTerm("");
 
   useEffect(() => {
-    if (data?.reservations) {
-      setTableData(data?.reservations);
+    if (responseData) {
+      setTableData(responseData);
     }
+  }, [responseData]);
+
+  // FETCH INITIAL DATA FROM THE SERVER
+  useEffect(() => {
+    fetchData();
   }, []);
 
   useEffect(() => {
     handleSearch({ search: searchValue, ...filters });
-  }, [searchValue, filters]);
+  }, [searchValue, filters, handleSearch]);
 
+  //GET LIST OF COLUMN TO SHOW ON SELECT COLUMN DROPDOWN
   const allColumns = useMemo(() => {
-    if (data?.reservations && data?.reservations.length) {
+    if (responseData.length) {
       return [
         "firstName",
         "lastName",
-        ...Object.keys(data?.reservations[0]).filter(
+        ...Object.keys(responseData[0]).filter(
           (item) => item !== "customer" && item !== "id"
         ),
       ];
     }
     return [];
-  }, []);
+  }, [responseData]);
 
   return (
     <>
@@ -98,9 +124,13 @@ export default function Index() {
             handleColumnVisibility={handleColumnVisibility}
             onFilter={() => setFilterVisibility(true)}
           />
-          <div className="table-wrapper">
-            <Table table={table} />
-          </div>
+          {loading ? (
+            <h4>Loading...</h4>
+          ) : (
+            <div className="table-wrapper">
+              <Table table={table} />
+            </div>
+          )}
         </DashboardPageWrapper>
       </DashboardContainer>
 

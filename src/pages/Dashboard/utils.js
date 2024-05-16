@@ -92,6 +92,7 @@ const getFilter = (base, value) => {
     : true;
 };
 
+// COMPARE DATES
 const dateCheck = (date1, date2) => {
   if (date1 && date2) {
     return dayjs(date1, "DD.MM.YYYY")?.diff(date2) === 0;
@@ -103,6 +104,7 @@ export const searchCustomer = (data, key) => {
   if ((data, key)) {
     const { search, status, shift, date, area } = key;
 
+    // SPLIT NAMES INTO ARRAY
     const searchValues = search
       .split(" ")
       .map((item) => item.toLowerCase())

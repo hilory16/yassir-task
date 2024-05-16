@@ -56,11 +56,19 @@ export default function FilterModal({
     handleFilter(initialState);
   };
 
+  const handleClose = () => {
+    if (defaultValues) {
+      // POPULATE EXISTING VALUE AFTER CHANGING FILTERS BUT NOT CONFIRMING
+      setFilterState(defaultValues);
+    }
+    onClose();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} contentCentered>
+    <Modal isOpen={isOpen} onClose={handleClose} contentCentered>
       <FilterModalWrapper>
         <div className="close-icon">
-          <button type="button" onClick={onClose} aria-label="close modal">
+          <button type="button" onClick={handleClose} aria-label="close modal">
             <CloseSquare size="30" color={theme.colors.black} />
           </button>
         </div>
