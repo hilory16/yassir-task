@@ -104,7 +104,6 @@ export const searchCustomer = (data, key) => {
   if ((data, key)) {
     const { search, status, shift, date, area } = key;
 
-    // SPLIT NAMES INTO ARRAY
     const searchValues = search
       .split(" ")
       .map((item) => item.toLowerCase())
