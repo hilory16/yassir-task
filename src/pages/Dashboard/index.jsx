@@ -12,7 +12,7 @@ import { preventMultipleWhiteSpaces } from "utils/string";
 import Table from "components/Table";
 import ReservationTableControls from "./Feature/ReservationTableControls";
 import FilterModal from "./Feature/FilterModal";
-import { getColumns, searchCustomer } from "./utils";
+import { getColumns, searchCustomer, mergeName } from "./utils";
 import { apis } from "services";
 
 export default function Index() {
@@ -44,10 +44,11 @@ export default function Index() {
     try {
       const { reservations } = await apis.fetchData();
       // (data.reservations) - I ADDED THIS FALLBACK BECAUSE THE LINK WAS INACCESSIBLE AS SOME POINT
-      setResponseData(reservations || data.reservations);
+      const baseData = reservations || data.reservations;
+      setResponseData(mergeName(baseData));
     } catch (e) {
       // I ADDED THIS FALLBACK BECAUSE THE LINK WAS INACCESSIBLE AS SOME POINT
-      setResponseData(data.reservations);
+      setResponseData(mergeName(data.reservations));
     }
     setLoading(false);
   };
@@ -97,13 +98,7 @@ export default function Index() {
   //GET LIST OF COLUMN TO SHOW ON SELECT COLUMN DROPDOWN
   const allColumns = useMemo(() => {
     if (responseData.length) {
-      return [
-        "firstName",
-        "lastName",
-        ...Object.keys(responseData[0]).filter(
-          (item) => item !== "customer" && item !== "id"
-        ),
-      ];
+      return Object.keys(responseData[0]);
     }
     return [];
   }, [responseData]);

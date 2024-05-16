@@ -14,15 +14,9 @@ export const getColumns = (visibleColumns) => {
       cell: (info) => info.getValue(),
     }),
 
-    columnHelper.accessor("customer.firstName", {
-      id: "firstName",
-      header: () => "First Name",
-      cell: (info) => info.getValue(),
-    }),
-
-    columnHelper.accessor("customer.lastName", {
-      id: "lastName",
-      header: () => "Last Name",
+    columnHelper.accessor("customer", {
+      id: "customer",
+      header: () => "Customer",
       cell: (info) => info.getValue(),
     }),
 
@@ -49,6 +43,7 @@ export const getColumns = (visibleColumns) => {
 
     columnHelper.accessor("guestNotes", {
       header: "Guest Note",
+      cell: (info) => info.renderValue() || "-",
     }),
 
     columnHelper.accessor("businessDate", {
@@ -103,32 +98,14 @@ const dateCheck = (date1, date2) => {
 export const searchCustomer = (data, key) => {
   if ((data, key)) {
     const { search, status, shift, date, area } = key;
-
-    const searchValues = search
-      .split(" ")
-      .map((item) => item.toLowerCase())
-      .filter((item) => item !== "");
-
-    return data
-      .filter(({ customer }) => {
-        let matched = {};
-        return searchValues.every((item) => {
-          const first = customer?.firstName.toLowerCase().indexOf(item) > -1;
-          const second = customer?.lastName.toLowerCase().indexOf(item) > -1;
-          if ((matched.first && first) || (matched.second && second))
-            return false;
-
-          matched = { first, second };
-          return first || second;
-        });
-      })
-      .filter(
-        (item) =>
-          getFilter(item.status, status) &&
-          getFilter(item.shift, shift) &&
-          getFilter(item.area, area) &&
-          dateCheck(item.businessDate.replaceAll("."), date)
-      );
+    return data.filter(
+      (item) =>
+        item.customer.toLowerCase().indexOf(search.toLowerCase()) > -1 &&
+        getFilter(item.status, status) &&
+        getFilter(item.shift, shift) &&
+        getFilter(item.area, area) &&
+        dateCheck(item.businessDate.replaceAll("."), date)
+    );
   }
   return data || [];
 };
@@ -138,3 +115,9 @@ export const options = {
   shift: ["all", "breakfast", "lunch", "dinner"],
   area: ["all", "main room", "bar"],
 };
+
+export const mergeName = (baseData) =>
+  baseData.map(({ customer, ...rest }) => ({
+    ...rest,
+    customer: `${customer.firstName} ${customer.lastName}`,
+  }));
