@@ -9,6 +9,7 @@ import { data } from "data";
 import DashboardContainer from "components/DashboardContainer";
 import { DashboardPageWrapper } from "pages/Dashboard/Dashboard.style";
 import { preventMultipleWhiteSpaces } from "utils/string";
+import Random from "components/Random";
 import Table from "components/Table";
 import ReservationTableControls from "./Feature/ReservationTableControls";
 import FilterModal from "./Feature/FilterModal";
@@ -107,6 +108,7 @@ export default function Index() {
     <>
       <DashboardContainer>
         <DashboardPageWrapper>
+          <Random />
           <h2 className="page-title">Reservations</h2>
           <ReservationTableControls
             title="Upcoming Reservations"
